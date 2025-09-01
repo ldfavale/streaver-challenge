@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
+import { z } from 'zod'
 
-interface DeleteParams {
-  params: { id: string }
-}
+// Esquema para validar que el `id` del parámetro de la ruta es un número
+const routeParamsSchema = z.object({
+  id: z.coerce.number(),
+})
 
 /**
  * @swagger
@@ -30,30 +32,37 @@ interface DeleteParams {
  *                 message:
  *                   type: string
  *                   example: Post 1 deleted successfully
+ *       400:
+ *         description: Invalid post ID.
  *       404:
  *         description: Post not found.
  *       500:
  *         description: Internal server error.
  */
-export async function DELETE(request: Request, { params }: DeleteParams) {
-  const postId = parseInt(params.id, 10)
-
-  if (isNaN(postId)) {
-    return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 })
-  }
-
+export async function DELETE(
+  request: Request,
+  context: { params: { id: string } }
+) {
   try {
+    // Valida los parámetros de la ruta
+    const { id } = routeParamsSchema.parse(context.params)
+
     await prisma.post.delete({
-      where: { id: postId },
+      where: { id },
     })
 
-    return NextResponse.json({ message: `Post ${postId} deleted successfully` })
+    return NextResponse.json({ message: `Post ${id} deleted successfully` })
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.issues }, { status: 400 })
+    }
+
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
         return NextResponse.json({ error: 'Post not found' }, { status: 404 })
       }
     }
+
     console.error('Error deleting post:', error)
     return NextResponse.json(
       { error: 'An error occurred while deleting the post.' },

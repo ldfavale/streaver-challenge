@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
+
+// Esquema de validación para los parámetros de la query
+const getPostsQuerySchema = z.object({
+  userId: z.coerce.number().optional(),
+})
 
 /**
  * @swagger
@@ -22,20 +28,29 @@ import { prisma } from '@/lib/prisma'
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/PostWithAuthor'
+ *       400:
+ *         description: Invalid input.
  *       500:
  *         description: Internal server error.
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const userId = searchParams.get('userId')
+  const queryParams = Object.fromEntries(searchParams.entries())
 
-  // Build a dynamic where clause
+  const validation = getPostsQuerySchema.safeParse(queryParams)
+
+  if (!validation.success) {
+    return NextResponse.json(
+      { error: validation.error.issues },
+      { status: 400 }
+    )
+  }
+
+  const { userId } = validation.data
+
   const where: { authorId?: number } = {}
-  if (userId) {
-    const parsedUserId = parseInt(userId, 10)
-    if (!isNaN(parsedUserId)) {
-      where.authorId = parsedUserId
-    }
+  if (userId !== undefined) {
+    where.authorId = userId
   }
 
   try {
