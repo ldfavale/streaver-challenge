@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import TrashIcon from '../atoms/icons/TrashIcon'
 import ConfirmationModal from './ConfirmationModal'
+import { useOptimisticUpdate } from '@/hooks/useOptimisticUpdate'
+import { useToast } from '@/providers/ToastProvider'
 
 type PostWithAuthor = {
   id: number
@@ -20,39 +21,43 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const router = useRouter()
+  const [isOptimisticallyDeleted, setIsOptimisticallyDeleted] = useState(false)
+  const { showToast } = useToast()
+
+  const { executeOptimisticUpdate, isOptimistic } = useOptimisticUpdate({
+    onSuccess: () => {
+      showToast('Post deleted successfully', 'success')
+    },
+    onError: (error) => {
+      console.error('Failed to delete post:', error)
+      showToast('Failed to delete post. Please try again.', 'error')
+    },
+  })
 
   const handleDeleteClick = () => {
     setIsModalOpen(true)
   }
 
   const handleConfirmDelete = async () => {
-    setIsDeleting(true)
-    try {
-      const response = await fetch(`/api/posts/${post.id}`, {
-        method: 'DELETE',
-      })
+    await executeOptimisticUpdate(
+      () => setIsOptimisticallyDeleted(true),
+      () =>
+        fetch(`/api/posts/${post.id}`, { method: 'DELETE' }).then((res) => {
+          if (!res.ok) throw new Error('Failed to delete post')
+          return res.json()
+        }),
+      () => setIsOptimisticallyDeleted(false)
+    )
 
-      if (response.ok) {
-        // Refresh the page to show updated data
-        router.refresh()
-      } else {
-        const error = await response.json()
-        console.error('Error deleting post:', error)
-        // You could show a toast notification here
-      }
-    } catch (error) {
-      console.error('Error deleting post:', error)
-      // You could show a toast notification here
-    } finally {
-      setIsDeleting(false)
-      setIsModalOpen(false)
-    }
+    setIsModalOpen(false)
   }
 
   const handleCancelDelete = () => {
     setIsModalOpen(false)
+  }
+
+  if (isOptimisticallyDeleted) {
+    return null
   }
 
   return (
@@ -73,11 +78,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <button
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md text-sm transition-colors duration-200 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleDeleteClick}
-            disabled={isDeleting}
+            disabled={isOptimistic}
             aria-label={`Delete post: ${post.title}`}
           >
             <TrashIcon className="w-4 h-4 mr-2" />
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isOptimistic ? 'Deleting...' : 'Delete'}
           </button>
         </div>
       </article>
