@@ -1,4 +1,5 @@
 import React from 'react'
+import TrashIcon from '../atoms/icons/TrashIcon'
 
 type PostWithAuthor = {
   id: number
@@ -26,12 +27,13 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       </div>
       <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 flex justify-between items-center">
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Autor: {post.author?.name ?? 'Unknown user'}
+          Author: {post.author?.name ?? 'Unknown user'}
         </p>
         <button
-          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md text-sm transition-colors duration-200"
-          aria-label={`Eliminar post: ${post.title}`}
+          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md text-sm transition-colors duration-200 flex items-center"
+          aria-label={`Delete post: ${post.title}`}
         >
+          <TrashIcon className="w-4 h-4 mr-2" />
           Delete
         </button>
       </div>

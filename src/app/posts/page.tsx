@@ -18,7 +18,7 @@ async function getPosts() {
     return posts
   } catch (error) {
     console.error('Database Error:', error)
-    return []
+    throw new Error('Failed to fetch posts.')
   }
 }
 
@@ -26,7 +26,7 @@ export default async function PostsPage() {
   const posts = await getPosts()
 
   if (posts.length === 0) {
-    return <p className="text-center">No se encontraron publicaciones.</p>
+    return <p className="text-center">No posts found.</p>
   }
 
   return (
