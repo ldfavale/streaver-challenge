@@ -1,10 +1,12 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useOnlineStatus } from './useOnlineStatus'
 
 interface OptimisticUpdateOptions<T> {
   onSuccess?: (data: T) => void
   onError?: (error: Error) => void
   onSettled?: () => void
+  onOffline?: () => void
 }
 
 interface OptimisticUpdateState {
@@ -22,6 +24,7 @@ export function useOptimisticUpdate<T = unknown>(
     error: null,
   })
   const router = useRouter()
+  const isOnline = useOnlineStatus()
 
   const executeOptimisticUpdate = useCallback(
     async (
@@ -29,7 +32,11 @@ export function useOptimisticUpdate<T = unknown>(
       apiCall: () => Promise<T>,
       rollbackAction: () => void
     ) => {
-      // Execute optimistic update immediately
+      if (!isOnline) {
+        options.onOffline?.()
+        return
+      }
+
       optimisticAction()
       setState((prev) => ({
         ...prev,
@@ -41,14 +48,11 @@ export function useOptimisticUpdate<T = unknown>(
       try {
         const result = await apiCall()
 
-        // Success: keep the optimistic update
         setState((prev) => ({ ...prev, isOptimistic: false }))
         options.onSuccess?.(result)
 
-        // Refresh the page to get updated data
         router.refresh()
       } catch (error) {
-        // Error: rollback the optimistic update
         rollbackAction()
         const errorObj =
           error instanceof Error ? error : new Error('Unknown error')
@@ -66,7 +70,7 @@ export function useOptimisticUpdate<T = unknown>(
         options.onSettled?.()
       }
     },
-    [router, options]
+    [router, options, isOnline]
   )
 
   return {
@@ -74,5 +78,6 @@ export function useOptimisticUpdate<T = unknown>(
     isOptimistic: state.isOptimistic,
     isError: state.isError,
     error: state.error,
+    isOffline: !isOnline,
   }
 }

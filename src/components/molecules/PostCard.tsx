@@ -24,17 +24,31 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [isOptimisticallyDeleted, setIsOptimisticallyDeleted] = useState(false)
   const { showToast } = useToast()
 
-  const { executeOptimisticUpdate, isOptimistic } = useOptimisticUpdate({
-    onSuccess: () => {
-      showToast('Post deleted successfully', 'success')
-    },
-    onError: (error) => {
-      console.error('Failed to delete post:', error)
-      showToast('Failed to delete post. Please try again.', 'error')
-    },
-  })
+  const { executeOptimisticUpdate, isOptimistic, isOffline } =
+    useOptimisticUpdate({
+      onSuccess: () => {
+        showToast('Post deleted successfully', 'success')
+      },
+      onError: (error) => {
+        console.error('Failed to delete post:', error)
+        showToast('Failed to delete post. Please try again.', 'error')
+      },
+      onOffline: () => {
+        showToast(
+          'You are offline. Please check your connection and try again.',
+          'error'
+        )
+      },
+    })
 
   const handleDeleteClick = () => {
+    if (isOffline) {
+      showToast(
+        'You are offline. Please check your connection and try again.',
+        'error'
+      )
+      return
+    }
     setIsModalOpen(true)
   }
 
