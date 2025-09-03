@@ -158,6 +158,7 @@ const UserFilterDropdown: React.FC<UserFilterDropdownProps> = ({
               >
                 <li
                   role="option"
+                  aria-selected={!selectedUserId}
                   className={`
                     px-3 py-2 text-sm cursor-pointer
                     ${focusedIndex === -1 ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}
@@ -188,6 +189,7 @@ const UserFilterDropdown: React.FC<UserFilterDropdownProps> = ({
                   <li
                     key={user.id}
                     role="option"
+                    aria-selected={selectedUserId === user.id.toString()}
                     className={`
                       px-3 py-2 text-sm cursor-pointer
                       ${focusedIndex === index ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}
