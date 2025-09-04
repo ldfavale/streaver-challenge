@@ -14,6 +14,7 @@ const ReloadIcon = (props: IconProps) => {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      role="img"
       {...props}
     >
       <path d="M3 2v6h6" />

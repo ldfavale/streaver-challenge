@@ -1,8 +1,6 @@
 import React from 'react'
 
-type IconProps = React.SVGProps<SVGSVGElement>
-
-const TrashIcon = (props: IconProps) => {
+const TrashIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -10,6 +8,7 @@ const TrashIcon = (props: IconProps) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
+      role="img"
       {...props}
     >
       <path
