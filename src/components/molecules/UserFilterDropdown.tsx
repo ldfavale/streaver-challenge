@@ -27,7 +27,6 @@ const UserFilterDropdown: React.FC<UserFilterDropdownProps> = ({
     (user) => user.id.toString() === selectedUserId
   )
 
-  // Cerrar dropdown al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -43,7 +42,6 @@ const UserFilterDropdown: React.FC<UserFilterDropdownProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Navegación por teclado
   const handleKeyDown = (event: React.KeyboardEvent) => {
     switch (event.key) {
       case 'Enter':
@@ -85,7 +83,6 @@ const UserFilterDropdown: React.FC<UserFilterDropdownProps> = ({
       params.delete('userId')
     }
 
-    // Resetear a la primera página cuando se cambia el filtro
     params.delete('page')
 
     router.push(`/posts?${params.toString()}`)
