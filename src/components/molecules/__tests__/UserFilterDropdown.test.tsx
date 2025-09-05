@@ -30,7 +30,7 @@ describe('UserFilterDropdown', () => {
     render(<UserFilterDropdown users={mockUsers} />)
 
     const dropdownButton = screen.getByRole('button', {
-      name: /select author to filter/i,
+      name: /filter by author/i,
     })
     await user.click(dropdownButton)
 

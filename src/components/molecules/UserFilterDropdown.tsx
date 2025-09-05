@@ -124,7 +124,7 @@ const UserFilterDropdown: React.FC<UserFilterDropdownProps> = ({
             onKeyDown={handleKeyDown}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
-            aria-label="Select author to filter"
+            data-testid="user-filter-dropdown"
           >
             <span className="truncate">
               {selectedUser ? selectedUser.name : 'All authors'}
@@ -193,7 +193,7 @@ const UserFilterDropdown: React.FC<UserFilterDropdownProps> = ({
                       ${selectedUserId === user.id.toString() ? 'bg-blue-50 dark:bg-blue-800 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-white'}
                     `}
                     onClick={() => handleUserSelect(user.id)}
-                    onMouseEnter={() => setFocusedIndex(index)}
+                    data-testid={`user-option-${user.id}`}
                   >
                     <div className="flex items-center justify-between">
                       <span>{user.name || 'Unnamed user'}</span>

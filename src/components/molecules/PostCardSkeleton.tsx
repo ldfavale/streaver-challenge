@@ -2,7 +2,10 @@ import React from 'react'
 
 const PostCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 animate-pulse">
+    <div
+      className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 animate-pulse"
+      data-testid="post-skeleton"
+    >
       <div className="p-6">
         {/* Title Skeleton */}
         <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-3/4 mb-4"></div>

@@ -10,7 +10,12 @@
     "lint": "eslint",
     "prepare": "husky",
     "seed": "prisma db seed",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:ci": "jest --watchAll=false && npm run test:e2e"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -26,6 +31,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
@@ -47,6 +53,7 @@
     "tailwindcss": "^4",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "undici": "^7.15.0"
   }
 }

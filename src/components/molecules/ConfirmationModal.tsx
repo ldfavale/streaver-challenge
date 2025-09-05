@@ -141,6 +141,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
+      data-testid="confirmation-modal"
     >
       {/* Backdrop */}
       <div
@@ -183,6 +184,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               type="button"
               className={`inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200 ${styles.confirmButton}`}
               onClick={onConfirm}
+              data-testid="confirm-delete-button"
             >
               {confirmText}
             </button>
@@ -190,6 +192,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               type="button"
               className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
               onClick={onClose}
+              data-testid="cancel-delete-button"
             >
               {cancelText}
             </button>
