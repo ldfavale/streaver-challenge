@@ -1,10 +1,7 @@
-/** @jest-environment node */
-
 import { DELETE } from './route'
 import { prisma } from '@/lib/prisma'
 import { NextRequest } from 'next/server'
 
-// Mock the Prisma module
 jest.mock('@/lib/prisma', () => ({
   prisma: {
     post: {
@@ -14,7 +11,6 @@ jest.mock('@/lib/prisma', () => ({
   },
 }))
 
-// Create a typed mock for Prisma
 const mockPrisma = prisma as jest.Mocked<typeof prisma>
 
 describe('API /api/posts/[id]', () => {
@@ -24,7 +20,6 @@ describe('API /api/posts/[id]', () => {
 
   describe('DELETE', () => {
     it('should delete a post and return 200 if it exists', async () => {
-      // Arrange
       const postId = 1
       const mockPost = { id: postId, title: 'Test Post', body: '... ' }
       ;(mockPrisma.post.findUnique as jest.Mock).mockResolvedValue(mockPost)
@@ -32,11 +27,9 @@ describe('API /api/posts/[id]', () => {
 
       const request = new NextRequest(`http://localhost/api/posts/${postId}`)
 
-      // Act
       const response = await DELETE(request, { params: { id: String(postId) } })
       const body = await response.json()
 
-      // Assert
       expect(response.status).toBe(200)
       expect(body.message).toBe(`Post ${postId} deleted successfully`)
       expect(mockPrisma.post.findUnique).toHaveBeenCalledWith({
@@ -48,44 +41,36 @@ describe('API /api/posts/[id]', () => {
     })
 
     it('should return 404 if the post to delete does not exist', async () => {
-      // Arrange
       const postId = 99
       ;(mockPrisma.post.findUnique as jest.Mock).mockResolvedValue(null)
 
       const request = new NextRequest(`http://localhost/api/posts/${postId}`)
 
-      // Act
       const response = await DELETE(request, { params: { id: String(postId) } })
       const body = await response.json()
 
-      // Assert
       expect(response.status).toBe(404)
       expect(body.error).toBe('Post not found')
       expect(mockPrisma.post.delete).not.toHaveBeenCalled()
     })
 
     it('should return 400 for an invalid post ID', async () => {
-      // Arrange
       const invalidId = 'abc'
       const request = new NextRequest(`http://localhost/api/posts/${invalidId}`)
 
-      // Act
       const response = await DELETE(request, { params: { id: invalidId } })
       const body = await response.json()
 
-      // Assert
       expect(response.status).toBe(400)
       expect(body.error).toBe('Invalid post ID format')
       expect(mockPrisma.post.delete).not.toHaveBeenCalled()
     })
 
     it('should return 500 if the database fails on delete', async () => {
-      // Suppress console.error for this test
       const consoleErrorSpy = jest
         .spyOn(console, 'error')
         .mockImplementation(() => {})
 
-      // Arrange
       const postId = 1
       const mockPost = { id: postId, title: 'Test Post', body: '... ' }
       ;(mockPrisma.post.findUnique as jest.Mock).mockResolvedValue(mockPost)
@@ -95,15 +80,12 @@ describe('API /api/posts/[id]', () => {
 
       const request = new NextRequest(`http://localhost/api/posts/${postId}`)
 
-      // Act
       const response = await DELETE(request, { params: { id: String(postId) } })
       const body = await response.json()
 
-      // Assert
       expect(response.status).toBe(500)
       expect(body.error).toBe('An error occurred while deleting the post')
 
-      // Restore console.error
       consoleErrorSpy.mockRestore()
     })
   })

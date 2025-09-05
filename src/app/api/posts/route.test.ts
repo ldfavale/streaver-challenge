@@ -1,9 +1,6 @@
-/** @jest-environment node */
-
 import { GET, POST } from './route'
 import { prisma } from '@/lib/prisma'
 
-// 1. Mock the Prisma module
 jest.mock('@/lib/prisma', () => ({
   prisma: {
     post: {
@@ -12,18 +9,15 @@ jest.mock('@/lib/prisma', () => ({
   },
 }))
 
-// 2. Create a type for the Prisma mock for autocompletion and type safety
 const mockPrisma = prisma as jest.Mocked<typeof prisma>
 
 describe('API /api/posts', () => {
-  // 3. Clear mocks before each test to ensure isolation
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   describe('GET', () => {
     it('should return a list of posts and a 200 status', async () => {
-      // Arrange: Prepare the mock data that the DB will return
       const mockPosts = [
         {
           id: 1,
@@ -44,11 +38,9 @@ describe('API /api/posts', () => {
 
       const request = new Request('http://localhost/api/posts')
 
-      // Act: Execute the API handler
       const response = await GET(request)
       const body = await response.json()
 
-      // Assert: Verify the results
       expect(response.status).toBe(200)
       expect(body).toEqual(mockPosts)
       expect(mockPrisma.post.findMany).toHaveBeenCalledTimes(1)
@@ -76,14 +68,13 @@ describe('API /api/posts', () => {
       await GET(request)
 
       expect(mockPrisma.post.findMany).toHaveBeenCalledWith({
-        where: { authorId: 1 }, // Verify the filter was applied
+        where: { authorId: 1 },
         include: { author: true },
         orderBy: { id: 'desc' },
       })
     })
 
     it('should return a 500 error if the database fails', async () => {
-      // Suppress console.error for this test
       const consoleErrorSpy = jest
         .spyOn(console, 'error')
         .mockImplementation(() => {})
@@ -100,7 +91,6 @@ describe('API /api/posts', () => {
       expect(response.status).toBe(500)
       expect(body.error).toBe('An error occurred while fetching posts.')
 
-      // Restore console.error
       consoleErrorSpy.mockRestore()
     })
   })
