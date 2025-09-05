@@ -1,3 +1,6 @@
+/**
+ * @jest-environment @edge-runtime/jest-environment
+ */
 import { DELETE } from './route'
 import { prisma } from '@/lib/prisma'
 import { NextRequest } from 'next/server'

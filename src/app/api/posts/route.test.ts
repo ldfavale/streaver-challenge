@@ -1,4 +1,8 @@
-import { GET, POST } from './route'
+/**
+ * @jest-environment @edge-runtime/jest-environment
+ */
+
+import { GET } from './route'
 import { prisma } from '@/lib/prisma'
 
 jest.mock('@/lib/prisma', () => ({
