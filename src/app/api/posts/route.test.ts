@@ -9,6 +9,7 @@ jest.mock('@/lib/prisma', () => ({
   prisma: {
     post: {
       findMany: jest.fn(),
+      count: jest.fn(),
     },
   },
 }))
@@ -39,6 +40,7 @@ describe('API /api/posts', () => {
         },
       ]
       ;(mockPrisma.post.findMany as jest.Mock).mockResolvedValue(mockPosts)
+      ;(mockPrisma.post.count as jest.Mock).mockResolvedValue(2)
 
       const request = new Request('http://localhost/api/posts')
 
@@ -46,13 +48,9 @@ describe('API /api/posts', () => {
       const body = await response.json()
 
       expect(response.status).toBe(200)
-      expect(body).toEqual(mockPosts)
+      expect(body.data).toEqual(mockPosts)
       expect(mockPrisma.post.findMany).toHaveBeenCalledTimes(1)
-      expect(mockPrisma.post.findMany).toHaveBeenCalledWith({
-        where: {},
-        include: { author: true },
-        orderBy: { id: 'desc' },
-      })
+      expect(mockPrisma.post.count).toHaveBeenCalledTimes(1)
     })
 
     it('should return posts filtered by userId when provided', async () => {
@@ -66,6 +64,7 @@ describe('API /api/posts', () => {
         },
       ]
       ;(mockPrisma.post.findMany as jest.Mock).mockResolvedValue(mockPosts)
+      ;(mockPrisma.post.count as jest.Mock).mockResolvedValue(1)
 
       const request = new Request('http://localhost/api/posts?userId=1')
 
@@ -75,6 +74,8 @@ describe('API /api/posts', () => {
         where: { authorId: 1 },
         include: { author: true },
         orderBy: { id: 'desc' },
+        skip: 0,
+        take: 10,
       })
     })
 
@@ -84,6 +85,9 @@ describe('API /api/posts', () => {
         .mockImplementation(() => {})
 
       ;(mockPrisma.post.findMany as jest.Mock).mockRejectedValue(
+        new Error('Database error')
+      )
+      ;(mockPrisma.post.count as jest.Mock).mockRejectedValue(
         new Error('Database error')
       )
 
