@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('Requisitos Primarios - Posts Management', () => {
+test.describe('Primary Requirements - Posts Management', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/posts')
   })
@@ -18,11 +18,11 @@ test.describe('Requisitos Primarios - Posts Management', () => {
 
     for (let i = 0; i < Math.min(postCount, 3); i++) {
       const post = posts.nth(i)
-      await expect(post.locator('h2')).toBeVisible() // título
-      await expect(post.locator('[data-testid="post-author"]')).toBeVisible() // autor
+      await expect(post.locator('h2')).toBeVisible()
+      await expect(post.locator('[data-testid="post-author"]')).toBeVisible() // author
       await expect(
         post.locator('[data-testid="delete-post-button"]')
-      ).toBeVisible() // botón eliminar
+      ).toBeVisible()
     }
   })
 
