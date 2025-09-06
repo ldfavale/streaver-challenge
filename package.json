@@ -20,6 +20,13 @@
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },
+  "overrides": {
+    "swagger-ui-react": {
+      "react": "$react",
+      "react-dom": "$react-dom",
+      "prismjs": "^1.30.0"
+    }
+  },
   "dependencies": {
     "@prisma/client": "^6.15.0",
     "next": "15.5.2",
