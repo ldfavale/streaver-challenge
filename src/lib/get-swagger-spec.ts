@@ -19,6 +19,6 @@ const options: swaggerJsdoc.Options = {
   apis: ['./src/app/api/**/*.ts'],
 }
 
-export const getSwaggerSpec = () => {
-  return swaggerJsdoc(options)
+export const getSwaggerSpec = (): Record<string, unknown> => {
+  return swaggerJsdoc(options) as Record<string, unknown>
 }

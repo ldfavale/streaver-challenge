@@ -39,11 +39,11 @@ const routeParamsSchema = z.object({
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Validate the route parameters with Zod
-    const { id } = routeParamsSchema.parse(params)
+    // Await and validate the route parameters with Zod
+    const { id } = routeParamsSchema.parse(await params)
 
     // Check if post exists
     const existingPost = await prisma.post.findUnique({
