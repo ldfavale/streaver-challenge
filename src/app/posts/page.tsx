@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation'
 import PostCard from '@/components/molecules/PostCard'
 import UserFilterDropdown from '@/components/molecules/UserFilterDropdown'
 import PostCardSkeleton from '@/components/molecules/PostCardSkeleton'
-import { PostWithAuthor, User } from '@/types'
+import { PostWithAuthor, User, PaginatedResponse } from '@/types'
+import Pagination from '@/components/molecules/Pagination'
 
 async function fetchUsers(): Promise<User[]> {
   // For simplicity in this example, we fetch all users every time.
@@ -19,9 +20,19 @@ async function fetchUsers(): Promise<User[]> {
   return res.json()
 }
 
-async function fetchPosts(userId?: string | null): Promise<PostWithAuthor[]> {
-  const url = userId ? `/api/posts?userId=${userId}` : '/api/posts'
-  const res = await fetch(url)
+async function fetchPosts(
+  userId?: string | null,
+  page = 1
+): Promise<PaginatedResponse<PostWithAuthor>> {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: '9',
+  })
+  if (userId) {
+    params.set('userId', userId)
+  }
+
+  const res = await fetch(`/api/posts?${params.toString()}`)
   if (!res.ok) {
     throw new Error('Failed to fetch posts')
   }
@@ -31,8 +42,10 @@ async function fetchPosts(userId?: string | null): Promise<PostWithAuthor[]> {
 function PostsPageClient() {
   const searchParams = useSearchParams()
   const userId = searchParams.get('userId')
+  const page = parseInt(searchParams.get('page') || '1', 10)
 
-  const [posts, setPosts] = useState<PostWithAuthor[]>([])
+  const [postsData, setPostsData] =
+    useState<PaginatedResponse<PostWithAuthor> | null>(null)
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -48,8 +61,8 @@ function PostsPageClient() {
         setUsers(usersData)
 
         // Then fetch posts.
-        const postsData = await fetchPosts(userId)
-        setPosts(postsData)
+        const postsResponse = await fetchPosts(userId, page)
+        setPostsData(postsResponse)
       } catch (e) {
         const errorMessage =
           e instanceof Error ? e.message : 'An unknown error occurred'
@@ -61,7 +74,7 @@ function PostsPageClient() {
     }
 
     loadData()
-  }, [userId])
+  }, [userId, page])
 
   const renderContent = () => {
     if (error) {
@@ -85,7 +98,7 @@ function PostsPageClient() {
       )
     }
 
-    if (posts.length === 0) {
+    if (!postsData || postsData.data.length === 0) {
       return (
         <div className="text-center py-12">
           <p className="text-gray-500 dark:text-gray-400 text-lg">
@@ -96,11 +109,21 @@ function PostsPageClient() {
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-      </div>
+      <>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {postsData.data.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+        <Pagination
+          currentPage={postsData.pagination.page}
+          totalPages={postsData.pagination.totalPages}
+          hasNext={postsData.pagination.hasNext}
+          hasPrev={postsData.pagination.hasPrev}
+          total={postsData.pagination.total}
+          limit={postsData.pagination.limit}
+        />
+      </>
     )
   }
 

@@ -6,3 +6,18 @@ export type User = Omit<PrismaUser, 'email'>
 
 // El tipo Post que incluye la relación con su autor
 export type PostWithAuthor = Post & { author: User }
+
+// Tipos para paginación
+export interface PaginationMeta {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
+}
+
+export interface PaginatedResponse<T> {
+  data: T[]
+  pagination: PaginationMeta
+}

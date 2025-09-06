@@ -83,6 +83,7 @@ const UserFilterDropdown: React.FC<UserFilterDropdownProps> = ({
       params.delete('userId')
     }
 
+    // Reset to first page when filter changes
     params.delete('page')
 
     router.push(`/posts?${params.toString()}`)
