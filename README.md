@@ -17,7 +17,7 @@ A modern, responsive web application for managing posts with advanced UX feature
 - Node.js 18+ 
 - npm/yarn/pnpm
 
-### Installation
+### Development Setup
 
 ```bash
 # Clone and install dependencies
@@ -31,6 +31,14 @@ npm run seed
 
 # Start development server
 npm run dev
+```
+
+### Production Setup
+
+```bash
+# Build and start production server
+npm run build
+npm start
 ```
 
 Open [http://localhost:3000/posts](http://localhost:3000/posts) to view the application.
