@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Streaver Challenge - Posts Management System
 
-## Getting Started
+A modern, responsive web application for managing posts with advanced UX features for unstable network conditions. Built with Next.js 14, TypeScript, and Prisma.
 
-First, run the development server:
+## ✨ Key Features
+
+- **Posts Management**: View, filter by user, and delete posts with confirmation modals
+- **Offline-First UX**: Network status detection, optimistic updates, and connection restoration feedback
+- **Responsive Design**: Mobile-first approach with accessibility compliance (WCAG 2.1 AA)
+- **API Documentation**: Interactive Swagger UI at `/api-docs`
+- **Type Safety**: Full TypeScript implementation with Zod validation
+- **Testing**: Comprehensive test suite (unit, integration, E2E)
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ 
+- npm/yarn/pnpm
+
+### Installation
 
 ```bash
+# Clone and install dependencies
+git clone https://github.com/ldfavale/streaver-challenge.git
+cd streaver-challenge
+npm install
+
+# Set up database and seed data
+npx prisma db push
+npm run seed
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000/posts](http://localhost:3000/posts) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🧪 Testing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Unit & Integration tests
+npm test
 
-## Learn More
+# E2E tests
+npm run test:e2e
 
-To learn more about Next.js, take a look at the following resources:
+# Run all tests (CI mode)
+npm run test:ci
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📚 API Documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Interactive API documentation available at [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
-## Deploy on Vercel
+### Available Endpoints
+- `GET /api/posts` - List all posts (with optional `userId` filter)
+- `DELETE /api/posts/[id]` - Delete a specific post
+- `GET /api/users` - List all users
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🏗️ Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: SQLite (development)
+- **Testing**: Jest, React Testing Library, Playwright
+- **Quality**: ESLint, Prettier, Husky pre-commit hooks
+- **Documentation**: Swagger/OpenAPI
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                 # Next.js App Router
+│   ├── api/            # API routes
+│   ├── posts/          # Posts page
+│   └── api-docs/       # Swagger UI
+├── components/         # React components (Atomic Design)
+│   ├── atoms/          # Basic UI elements
+│   └── molecules/      # Composite components
+├── hooks/              # Custom React hooks
+├── lib/                # Utilities and configurations
+└── types/              # TypeScript type definitions
+```
+
+
+## 📋 Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run seed         # Populate database with sample data
+npm test             # Run unit/integration tests
+npm run test:e2e     # Run E2E tests
+npm run test:ci      # Run all tests (CI mode)
+```
+
+## 🔍 Design Decisions
+
+See [assumptions.md](./assumptions.md) for detailed architectural decisions and implementation rationale.
